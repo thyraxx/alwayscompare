@@ -1,0 +1,20 @@
+<dict>
+	<dict name="game-mode">
+		<string name="Class">TestGameMode</string>
+	</dict>
+	<int name="version">1</int>
+	<dict name="lighting">
+		<string name="environment">effects/env/_day.env</string>
+	</dict>
+	<array name="tiles">
+		<dict>
+			<vec2 name="pos">0 0</vec2>
+			<array name="datasets">
+				<dict>
+					<string name="tileset">tilesets/______dev_dark_16.tileset</string>
+					<bytes name="data-rle">828282cc04e506e606e606e606e504828282cc</bytes>
+				</dict>
+			</array>
+		</dict>
+	</array>
+</dict>
