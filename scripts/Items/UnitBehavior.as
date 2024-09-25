@@ -302,7 +302,10 @@ namespace Item
 					auto gm = cast<BaseGameMode>(g_gameMode);
 					//@m_tooltip = Item::BuildItemTooltip(m_item, 0, 1);
 
-					@m_tooltip = Item::BuildCompareItemTooltip(m_item, m_item.GetPrice());
+					if(cast<Equipment::Equipment>(m_item) is null)
+						@m_tooltip = Item::BuildItemTooltip(m_item, 0, 1);
+					else
+						@m_tooltip = Item::BuildCompareItemTooltip(m_item, m_item.GetPrice());
 
 				}
 			}
