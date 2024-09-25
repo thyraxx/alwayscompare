@@ -1,6 +1,6 @@
 <dict>
 	<dict name="game-mode">
-		<string name="Class">TestGameMode</string>
+		<string name="Class">MissionGameMode</string>
 	</dict>
 	<int name="version">1</int>
 	<dict name="lighting">
@@ -14,7 +14,208 @@
 					<string name="tileset">tilesets/______dev_dark_16.tileset</string>
 					<bytes name="data-rle">828282cc04e506e606e606e606e504828282cc</bytes>
 				</dict>
+				<dict>
+					<string name="tileset">tilesets/______dev_16.tileset</string>
+					<bytes name="data-rle">82af04ea0eef12f314f516f718f819f919fa1afa1afa1afa1afa19f919f918f716f616f513f110ef0deb0682cf</bytes>
+				</dict>
 			</array>
 		</dict>
+	</array>
+	<dict name="units">
+		<array name=":Physics_Circle">
+			<array>
+				<vec2>0 32</vec2>
+				<int>1</int>
+				<dict>
+					<bool name="active">t</bool>
+					<float name="radius">50</float>
+					<bool name="jam-through">t</bool>
+					<bool name="sensor">t</bool>
+					<bool name="shot-through">t</bool>
+					<bool name="aim-through">t</bool>
+				</dict>
+			</array>
+		</array>
+	</dict>
+	<array name="scripts">
+		<array>
+			<string>RewardSpot</string>
+			<int>2</int>
+			<vec3>-40 -32 0</vec3>
+			<bool>t</bool>
+			<int>-1</int>
+			<bool>f</bool>
+			<dict>
+				<bool name="Materials">f</bool>
+				<bool name="Delayed">t</bool>
+				<bool name="Powerups">f</bool>
+				<bool name="Forced">t</bool>
+				<bool name="Pickups">f</bool>
+			</dict>
+		</array>
+		<array>
+			<string>RewardSpot</string>
+			<int>3</int>
+			<vec3>-8 -32 0</vec3>
+			<bool>t</bool>
+			<int>-1</int>
+			<bool>t</bool>
+			<dict>
+				<bool name="Materials">f</bool>
+				<bool name="Powerups">f</bool>
+				<bool name="Pickups">f</bool>
+			</dict>
+		</array>
+		<array>
+			<string>RewardSpot</string>
+			<int>4</int>
+			<vec3>40 -48 0</vec3>
+			<bool>t</bool>
+			<int>-1</int>
+			<bool>t</bool>
+			<dict>
+				<bool name="Delayed">t</bool>
+				<bool name="Materials">f</bool>
+				<bool name="Powerups">f</bool>
+				<bool name="Forced">t</bool>
+				<bool name="Pickups">f</bool>
+			</dict>
+		</array>
+		<array>
+			<string>UseTrigger</string>
+			<int>5</int>
+			<vec3>64 8 0</vec3>
+			<bool>t</bool>
+			<int>-1</int>
+			<bool>f</bool>
+			<dict>
+				<array name="Areas"><int>1</int></array>
+			</dict>
+			<array><int>3</int><int>0</int><int>7</int><int>0</int><int>12</int><int>0</int></array>
+		</array>
+		<array>
+			<string>AreaTrigger</string>
+			<int>6</int>
+			<vec3>-48 16 0</vec3>
+			<bool>t</bool>
+			<int>-1</int>
+			<bool>f</bool>
+			<dict>
+				<array name="Areas"><int>1</int></array>
+			</dict>
+			<array><int>3</int><int>0</int><int>2</int><int>0</int></array>
+		</array>
+		<array>
+			<string>SpawnUnit</string>
+			<int>7</int>
+			<vec3>112 -32 0</vec3>
+			<bool>t</bool>
+			<int>-1</int>
+			<bool>f</bool>
+			<dict>
+				<string name="UnitType">items/blueprint.unit</string>
+			</dict>
+		</array>
+		<array>
+			<string>RewardSpot</string>
+			<int>8</int>
+			<vec3>64 64 0</vec3>
+			<bool>t</bool>
+			<int>-1</int>
+			<bool>f</bool>
+			<dict>
+				<bool name="Delayed">t</bool>
+				<bool name="Materials">f</bool>
+				<bool name="Powerups">f</bool>
+				<bool name="Pickups">f</bool>
+			</dict>
+		</array>
+		<array>
+			<string>RewardSpot</string>
+			<int>9</int>
+			<vec3>-328 168 0</vec3>
+			<bool>t</bool>
+			<int>-1</int>
+			<bool>t</bool>
+			<dict>
+				<int name="Quality">1</int>
+				<bool name="Materials">f</bool>
+				<bool name="Powerups">f</bool>
+				<bool name="Forced">t</bool>
+			</dict>
+		</array>
+		<array>
+			<string>RewardSpot</string>
+			<int>10</int>
+			<vec3>-296 200 0</vec3>
+			<bool>t</bool>
+			<int>-1</int>
+			<bool>f</bool>
+			<dict>
+				<bool name="Delayed">t</bool>
+				<bool name="Materials">f</bool>
+				<int name="Quality">1</int>
+				<bool name="Powerups">f</bool>
+				<bool name="Forced">t</bool>
+			</dict>
+		</array>
+		<array>
+			<string>RewardSpotModifierArea</string>
+			<int>11</int>
+			<vec3>8 0 0</vec3>
+			<bool>t</bool>
+			<int>-1</int>
+			<bool>f</bool>
+			<dict>
+				<int name="Quality">0</int>
+			</dict>
+		</array>
+		<array>
+			<string>SpawnUnitAsLoot</string>
+			<int>12</int>
+			<vec3>-120 56 0</vec3>
+			<bool>t</bool>
+			<int>-1</int>
+			<bool>f</bool>
+			<dict>
+				<string name="UnitType">items/blueprint.unit</string>
+				<array name="SpawnOn"><int>1</int></array>
+			</dict>
+		</array>
+		<array>
+			<string>SpawnLoot</string>
+			<int>13</int>
+			<vec3>-8 104 0</vec3>
+			<bool>t</bool>
+			<int>-1</int>
+			<bool>t</bool>
+			<dict>
+				<string name="LootTableID">tavern</string>
+			</dict>
+		</array>
+		<array>
+			<string>SpawnLoot</string>
+			<int>14</int>
+			<vec3>120 48 0</vec3>
+			<bool>t</bool>
+			<int>-1</int>
+			<bool>t</bool>
+			<dict>
+				<string name="LootTableID">tavern</string>
+			</dict>
+		</array>
+		<array>
+			<string>SpawnUnitAsLoot</string>
+			<int>15</int>
+			<vec3>176 0 0</vec3>
+			<bool>t</bool>
+			<int>5</int>
+			<bool>t</bool>
+			<int>1000</int>
+			<dict>
+				<string name="UnitType">items/blueprint.unit</string>
+				<array name="SpawnOn"><int>8</int><int>8</int></array>
+			</dict>
+		</array>
 	</array>
 </dict>
