@@ -131,12 +131,7 @@ class SarcophagusRewardEquipment : SarcophagusReward
 		Equipment::Generator gen;
 		gen.m_qualities = Item::ParseQuality(GetParamString(u, params, "quality", false));
 		gen.m_slots = slots;
-
-		auto missionGM = cast<MissionGameModeBase>(g_gameMode);
-		if (missionGM !is null && missionGM.m_missionLevel !is null)
-			gen.m_ilvl = max(1, missionGM.m_missionLevel.m_diffLevel + Modifiers::lerp(ilvl, randf()));
-		else
-			gen.m_ilvl = max(1, 1 + Modifiers::lerp(ilvl, randf()));
+		gen.m_ilvl = int(g_diffLevel + 0.5f) + Modifiers::lerp(ilvl, randf());
 
 		@m_item = gen.GenerateKindItem(record, tags, modTags);
 	}
@@ -185,103 +180,20 @@ class SarcophagusRewardSkillSphere : SarcophagusReward
 {
 	PlayerSkillDef@ m_skillItem;
 	int m_skillLevel;
-	Sarcophagus@ m_sarcophagusItem;
 	PlayerRecord@ m_record;
 
-	SarcophagusRewardSkillSphere(SValue& params, PlayerRecord@ record, Sarcophagus@ sarcophagusItem)
+	SarcophagusRewardSkillSphere(SValue& params, PlayerRecord@ record, PlayerSkillDef@ skillItem)
 	{
 		super();
 
 		@m_record = record;
-		@m_sarcophagusItem = sarcophagusItem;
-
-		array<PlayerSkillDef@> possibleSkills;
-		for (uint i = 0; i < record.playerClass.m_skillDefs.length(); i++)
-			FillPossibleSkills(record, possibleSkills, record.playerClass.m_skillDefs[i], false);
-
-		
-		
-		@m_skillItem = PickSkill(possibleSkills);
+		@m_skillItem = skillItem;
 		m_skillLevel = min(record.GetSkillLevel(m_skillItem.m_id) + 1, m_skillItem.m_levelParams.length() - 1);
 	}
 
 	void GiveReward(PlayerRecord@ record) override
 	{
 		record.SkillTempUp(m_skillItem.m_id);
-	}
-
-	void FillPossibleSkills(PlayerRecord@ record, array<PlayerSkillDef@>@ possibleSkills, PlayerSkillDef@ skill, bool modSkill)
-	{
-		if (skill is null)
-			return;
-
-		for (uint i = 0; i < skill.m_reqSkills.length(); i++)
-		{
-			auto sDefB = record.playerClass.GetSkillDef(HashString(skill.m_reqSkills[i]));
-			if (sDefB !is null && record.GetSkillLevel(sDefB.m_id) <= 0)
-				return;
-		}
-
-		for (uint i = 0; i < skill.m_blockerSkills.length(); i++)
-		{
-			auto sDefB = record.playerClass.GetSkillDef(HashString(skill.m_blockerSkills[i]));
-			if (sDefB !is null && record.GetSkillLevel(sDefB.m_id) > 0)
-				return;
-		}
-
-		int skillLvl = record.GetSkillLevel(skill.m_id);
-		if (modSkill && skillLvl < int(skill.m_levelSkillCost.length()))
-			possibleSkills.insertLast(skill);
-
-		if (skillLvl > 0)
-		{
-			for (uint i = 0; i < skill.m_modSkills.length(); i++)
-				FillPossibleSkills(record, possibleSkills, skill.m_modSkills[i], true);
-		}
-	}
-
-	PlayerSkillDef@ PickSkill(array<PlayerSkillDef@>@ possibleSkills)
-	{
-		if (possibleSkills.length() < 1)
-			return null;
-
-		auto sacrophagusSkills = m_sarcophagusItem.GetSkills();
-
-		int totChance = 0;
-		for (uint i = 0; i < possibleSkills.length(); i++)
-		{
-			bool blocked = false;
-			for (uint j = 0; j < sacrophagusSkills.length(); j++)
-			{
-				if (possibleSkills[i].m_parentSkill is sacrophagusSkills[j].m_parentSkill)
-					blocked = true;
-			}
-
-			if (blocked)
-				possibleSkills[i]._m_tmpChanceCounter = 0;
-			else
-				possibleSkills[i]._m_tmpChanceCounter = GetSkillDropRateChance(possibleSkills[i]);
-
-			totChance += possibleSkills[i]._m_tmpChanceCounter;
-		}
-
-		int r = randi(totChance);
-		for (uint i = 0; i < possibleSkills.length(); i++)
-		{
-			r -= possibleSkills[i]._m_tmpChanceCounter;
-			if (r < 0)
-			{
-				auto skill = possibleSkills[i];
-				possibleSkills.removeAt(i);
-				return skill;
-			}
-		}
-
-		int idx = randi(possibleSkills.length());
-		auto skill = possibleSkills[idx];
-		possibleSkills.removeAt(idx);
-
-		return skill;
 	}
 
 	Item::Quality GetQuality() const override
@@ -316,4 +228,79 @@ class SarcophagusRewardSkillSphere : SarcophagusReward
 	{
 		return 2;
 	}
+}
+
+
+void FillPossibleSkills(PlayerRecord@ record, array<PlayerSkillDef@>@ possibleSkills, PlayerSkillDef@ skill, bool modSkill)
+{
+	if (skill is null)
+		return;
+
+	for (uint i = 0; i < skill.m_reqSkills.length(); i++)
+	{
+		auto sDefB = record.playerClass.GetSkillDef(HashString(skill.m_reqSkills[i]));
+		if (sDefB !is null && record.GetSkillLevel(sDefB.m_id) <= 0)
+			return;
+	}
+
+	for (uint i = 0; i < skill.m_blockerSkills.length(); i++)
+	{
+		auto sDefB = record.playerClass.GetSkillDef(HashString(skill.m_blockerSkills[i]));
+		if (sDefB !is null && record.GetSkillLevel(sDefB.m_id) > 0)
+			return;
+	}
+
+	int skillLvl = record.GetSkillLevel(skill.m_id);
+	if (modSkill && skillLvl < int(skill.m_levelSkillCost.length()))
+		possibleSkills.insertLast(skill);
+
+	if (skillLvl > 0)
+	{
+		for (uint i = 0; i < skill.m_modSkills.length(); i++)
+			FillPossibleSkills(record, possibleSkills, skill.m_modSkills[i], true);
+	}
+}
+
+PlayerSkillDef@ PickSkill(array<PlayerSkillDef@>@ possibleSkills, Sarcophagus@ sarcophagusItem)
+{
+	if (possibleSkills.length() < 1)
+		return null;
+
+	auto sacrophagusSkills = sarcophagusItem.GetSkills();
+
+	int totChance = 0;
+	for (uint i = 0; i < possibleSkills.length(); i++)
+	{
+		bool blocked = false;
+		for (uint j = 0; j < sacrophagusSkills.length(); j++)
+		{
+			if (possibleSkills[i].m_parentSkill is sacrophagusSkills[j].m_parentSkill)
+				blocked = true;
+		}
+
+		if (blocked)
+			possibleSkills[i]._m_tmpChanceCounter = 0;
+		else
+			possibleSkills[i]._m_tmpChanceCounter = GetSkillDropRateChance(possibleSkills[i]);
+
+		totChance += possibleSkills[i]._m_tmpChanceCounter;
+	}
+
+	int r = randi(totChance);
+	for (uint i = 0; i < possibleSkills.length(); i++)
+	{
+		r -= possibleSkills[i]._m_tmpChanceCounter;
+		if (r < 0)
+		{
+			auto skill = possibleSkills[i];
+			possibleSkills.removeAt(i);
+			return skill;
+		}
+	}
+
+	int idx = randi(possibleSkills.length());
+	auto skill = possibleSkills[idx];
+	possibleSkills.removeAt(idx);
+
+	return skill;
 }
