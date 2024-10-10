@@ -48,6 +48,8 @@ class PlayerMenuCharacterTab : MenuTab
 	bool m_refreshTooltip;
 	bool m_menuContext;
 
+	EquipmentItemWidget@ previousInteractableEquipment;
+
 	PlayerMenuCharacterTab(GUIBuilder@ b, uint id)
 	{
 		super(b, id, "gui/playermenu/character.gui");
