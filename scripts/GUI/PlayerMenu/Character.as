@@ -48,8 +48,6 @@ class PlayerMenuCharacterTab : MenuTab
 	bool m_refreshTooltip;
 	bool m_menuContext;
 
-	EquipmentItemWidget@ previousInteractableEquipment;
-
 	PlayerMenuCharacterTab(GUIBuilder@ b, uint id)
 	{
 		super(b, id, "gui/playermenu/character.gui");
@@ -422,6 +420,30 @@ class PlayerMenuCharacterTab : MenuTab
 		widget.SetText(stat);
 	}
 
+	array<string> m_icons = {
+		//"strength",
+		//"intelligence",
+		//"dexterity",
+		//"focus",
+		//"vitality",
+		"health",
+		"mana",
+		"healthregen",
+		"manaregen",
+		"atkpwr",
+		"splpwr",
+		"armor",
+		"evadechance",
+		"movespeed",
+		//"experience",
+		//"attrpt",
+		//"skillpt",
+	};
+	array<string>@ GetShownIcons() override
+	{
+		return m_icons;
+	}
+
 	bool Update(int ms, GameInput& gameInput, MenuInput& menuInput) override
 	{
 		auto record = GetLocalPlayerRecord();
@@ -454,8 +476,8 @@ class PlayerMenuCharacterTab : MenuTab
 		SetStatsText("attack-dmg-text", stats.AttackPower);
 		SetStatsText("spell-dmg-text", stats.SpellPower);
 		SetStatsText("armor-text", stats.Armor);
-		SetStatsText("evasion-text", stats.EvadeChance);
-		SetStatsText("movespeed-text", stats.MoveSpeed);
+		SetStatsText("evasion-text", int(stats.EvadeChance * 100.f) + "%");
+		SetStatsText("movespeed-text", int(stats.MoveSpeed * 100.f) + "%");
 
 		// Level
 		int64 xpStart = record.LevelExperience(record.level - 1);
