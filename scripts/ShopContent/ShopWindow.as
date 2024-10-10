@@ -9,6 +9,7 @@ class ShopWindow : AWindowObject
 	ScrollbarWidget@ m_itemList;
 	TextWidget@ m_itemDescription;
 	TextWidget@ m_currencyText;
+	TextWidget@ m_emptyPrompt;
 
 	bool m_skipCost;
 	bool m_gold;
@@ -30,6 +31,7 @@ class ShopWindow : AWindowObject
 		@m_itemList = cast<ScrollbarWidget>(m_widget.GetWidgetById("list"));
 		@m_itemDescription = cast<TextWidget>(m_widget.GetWidgetById("description"));
 		@m_currencyText = cast<TextWidget>(m_widget.GetWidgetById("currency"));
+		@m_emptyPrompt = cast<TextWidget>(m_widget.GetWidgetById("empty"));
 
 		BuildList(content);
 
@@ -51,7 +53,7 @@ class ShopWindow : AWindowObject
 			return;
 
 		if (m_shopTitle !is null)
-			m_shopTitle.SetText(content.GetName());
+			m_shopTitle.SetText(Resources::GetString(content.GetName()));
 
 		@m_shopContent = content;
 
@@ -67,6 +69,28 @@ class ShopWindow : AWindowObject
 
 		if (m_itemList !is null)
 			m_itemList.ClearChildren();
+	}
+
+	array<string>@ GetShownIcons() override
+	{
+		array<string> icons;
+		
+		if (m_gold)
+			icons.insertLast("gold");
+		if (m_wood)
+			icons.insertLast("wood");
+		if (m_stone)
+			icons.insertLast("stone");
+		if (m_iron)
+			icons.insertLast("iron");
+		if (m_crystal)
+			icons.insertLast("crystal");
+		if (m_dust)
+			icons.insertLast("dust");
+		if (m_fragments)
+			icons.insertLast("fragments");
+		
+		return icons;
 	}
 
 	void Refresh()
@@ -93,8 +117,8 @@ class ShopWindow : AWindowObject
 				auto cost = currItem.GetCost();
 				if (cost !is null)
 				{
-					newButton.SetCostText(cost.GetText(m_shopContent.m_player));
-
+					newButton.SetCostText(cost.GetText(m_shopContent.m_player, true));
+					
 					m_gold = m_gold || cost.GetCost(MaterialType::Gold) != 0;
 					m_wood = m_wood || cost.GetCost(MaterialType::Wood) != 0;
 					m_stone = m_stone || cost.GetCost(MaterialType::Stone) != 0;
@@ -103,12 +127,19 @@ class ShopWindow : AWindowObject
 					m_dust = m_dust || cost.GetCost(MaterialType::Dust) != 0;
 					m_fragments = m_fragments || cost.GetCost(MaterialType::Fragments) != 0;
 				}
+				else
+					newButton.SetCostText("");
 			}
 
 			newButton.m_navPos = ivec2(0, i);
 
 			m_itemList.AddChild(newButton);
 		}
+
+		if (m_shopItems.length() > 0)
+			m_emptyPrompt.SetText("");
+		else
+			m_emptyPrompt.SetText(Resources::GetString(m_shopContent.GetEmptyShopText()));
 
 		if (m_currencyText !is null)
 		{
@@ -211,6 +242,9 @@ class ShopWindow : AWindowObject
 
 	void OnFunc(Widget@ sender, const string &in name) override
 	{
+		if (name == "close")
+			m_closing = true;
+
 		if (m_shopContent is null)
 			return;
 
