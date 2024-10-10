@@ -269,8 +269,6 @@ class PlayerMenuCharacterTab : MenuTab
 	}
 
 	void AlwaysTooltip() {
-		m_contextC = 0;
-
 		auto inventoryScroll = cast<ScrollbarWidget>(m_input.GetCurrentInteractable());
 		if (inventoryScroll is null)
 			return;
