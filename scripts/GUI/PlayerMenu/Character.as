@@ -43,6 +43,9 @@ class PlayerMenuCharacterTab : MenuTab
 	TextWidget@ m_sessionDust;
 	TextWidget@ m_sessionFragments;
 
+	BindingDisplayWidget@ m_bindingSubTabP;
+	BindingDisplayWidget@ m_bindingSubTabN;
+
 	int m_contextC;
 
 	bool m_refreshTooltip;
@@ -100,6 +103,9 @@ class PlayerMenuCharacterTab : MenuTab
 		@m_sessionCrystals = cast<TextWidget>(m_widget.GetWidgetById("material-session-crystals-text"));
 		@m_sessionDust = cast<TextWidget>(m_widget.GetWidgetById("material-session-dust-text"));
 		@m_sessionFragments = cast<TextWidget>(m_widget.GetWidgetById("material-session-fragments-text"));
+
+		@m_bindingSubTabP = cast<BindingDisplayWidget>(m_widget.GetWidgetById("binding-subtab-p"));
+		@m_bindingSubTabN = cast<BindingDisplayWidget>(m_widget.GetWidgetById("binding-subtab-n"));
 
 		auto record = GetLocalPlayerRecord();
 		if (record !is null)
@@ -173,6 +179,14 @@ class PlayerMenuCharacterTab : MenuTab
 		
 		
 		RefreshInteractableWidgets(m_widget);
+	}
+
+	void RefreshKeybinds(ControlMap@ currMap) override
+	{
+		m_bindingSubTabP.SetBinding("MenuPreviousSubTab");
+		m_bindingSubTabN.SetBinding("MenuNextSubTab");
+
+		AWindowObject::RefreshKeybinds(currMap);
 	}
 
 	void OnInteractableIndexChanged() override
