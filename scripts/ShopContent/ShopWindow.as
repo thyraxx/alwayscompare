@@ -108,7 +108,12 @@ class ShopWindow : AWindowObject
 			newButton.SetTitle(currItem.GetTitle());
 			newButton.SetSubTitle(currItem.GetSubTitle());
 			
-			newButton.SetIcon(currItem.GetIcon());
+			auto iconColor = vec4(1);
+			auto eqItem = cast<Equipment::Equipment>(currItem.GetItem());
+			if (eqItem !is null && !m_shopContent.m_player.equipped.MayEquip(eqItem))
+				iconColor = vec4(1,0,0,1);
+			
+			newButton.SetIcon(currItem.GetIcon(), iconColor);
 			newButton.SetBackground(currItem.GetBackground());
 			@newButton.m_shopItem = currItem;
 
