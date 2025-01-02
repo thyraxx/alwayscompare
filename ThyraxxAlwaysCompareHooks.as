@@ -1,7 +1,7 @@
 namespace alwayscompare
 {
 	//WindowInput@ g_windowInput;
-	AGameplayGameMode@ m_baseGameMode;
+	AGameplayGameMode@ m_aGameplayMode;
 	int tabWindowIndex = 0;
 
 	[Hook]
@@ -22,21 +22,14 @@ namespace alwayscompare
 		if(GetLocalPlayer() is null)
 			return;
 
-		auto sarcophagusWindow = cast<SarcophagusWindow>(GetOpenWindow(baseGameMode));
-		if(sarcophagusWindow !is null)
-			CompareSarcophagusEquipmentTooltip(sarcophagusWindow);
-
 		auto equipmentOnFloor = cast<Item::UnitBehavior>(GetLocalPlayer().GetTopUsable());
 		if(equipmentOnFloor !is null)
 			ShowCompareGroundEquipment(equipmentOnFloor);
 
-		auto shopWindow = cast<ShopWindow>(GetOpenWindow(baseGameMode));
-		if(shopWindow !is null)
-			ShowShopWindowCompareTooltip(shopWindow);
+		if(!Lobby::IsInLobby())
+			return;
 
-		auto plyCharTab = cast<PlayerMenu>(GetOpenWindow(baseGameMode));
-		if(plyCharTab !is null)
-			ShowCompareInventoryTooltip(plyCharTab);
+		ShowCompareTooltipForUI(baseGameMode);
 
 		// Ugly stuff, dont want (big) loops in GameModeUpdate
 		// but if more tabs are added its also not guaranteed it stay in the same place
@@ -60,6 +53,27 @@ namespace alwayscompare
 
 	}
 
+	[Hook]
+	void GameModePausedUpdate(BaseGameMode@ baseGameMode, int ms, GameInput& gameInput, MenuInput& menuInput) 
+	{
+		ShowCompareTooltipForUI(baseGameMode);
+	}
+
+	// Main function
+	void ShowCompareTooltipForUI(BaseGameMode@ baseGameMode) {
+		auto sarcophagusWindow = cast<SarcophagusWindow>(GetOpenWindow(baseGameMode));
+		if(sarcophagusWindow !is null)
+			CompareSarcophagusEquipmentTooltip(sarcophagusWindow);
+
+		auto shopWindow = cast<ShopWindow>(GetOpenWindow(baseGameMode));
+		if(shopWindow !is null)
+			ShowShopWindowCompareTooltip(shopWindow);
+
+		auto plyCharTab = cast<PlayerMenu>(GetOpenWindow(baseGameMode));
+		if(plyCharTab !is null)
+			ShowCompareInventoryTooltip(plyCharTab);
+	}
+
 	void CompareSarcophagusEquipmentTooltip(SarcophagusWindow@ window) {
 		//print(Reflect::GetTypeName(cast<SpriteButtonWidget>(cast<SarcophagusWindow>(cast<BaseGameMode>(g_gameMode).m_windowManager.GetCurrentWindow()).m_input.GetCurrentInteractable())));
 		//cast<SarcophagusReward>(cast<SarcophagusWindow>(cast<BaseGameMode>(g_gameMode).m_windowManager.GetCurrentWindow()).m_input.GetCurrentInteractable())
@@ -74,7 +88,7 @@ namespace alwayscompare
 			return;
 
 		// Small debug printing
-		print(equipment.m_item.GetName());
+		//print(equipment.m_item.GetName());
 		//print("start comparing...");
 
 		if (cast<CompareItemTooltip>(window.m_manager.m_tooltip) is null)
@@ -136,7 +150,6 @@ namespace alwayscompare
 	[Hook]
 	void GameModePostStart(AGameplayGameMode@ aGameplayGameMode)
 	{
-		@m_baseGameMode = aGameplayGameMode;
 	}
 
 }
